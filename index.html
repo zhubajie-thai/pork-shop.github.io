@@ -1,11 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>🐷 Pork Shop Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8B4513 0%, #5c2e0f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .system-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .system-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .system-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .system-card h2 {
+            color: #8B4513;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .system-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .system-btn {
+            background: linear-gradient(135deg, #8B4513 0%, #6b3410 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .system-btn:hover {
+            background: linear-gradient(135deg, #a0522d 0%, #8B4513 100%);
+            transform: scale(1.05);
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-section h2 {
+            color: #8B4513;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #8B4513;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: #8B4513;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .systems-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-box {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐷 Pork Shop Management System</h1>
+            <p>Complete Business Management Solution</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-section" id="statsSection">
+            <h2>📊 Today's Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Transactions</div>
+                    <div class="stat-value" id="statTransactions">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Revenue</div>
+                    <div class="stat-value" id="statRevenue">₱0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Items Sold</div>
+                    <div class="stat-value" id="statItems">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Customers</div>
+                    <div class="stat-value" id="statCustomers">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Systems Grid -->
+        <div class="systems-grid">
+            <!-- POS System -->
+            <a href="pos.html" class="system-card">
+                <div class="system-icon">💳</div>
+                <h2>Point of Sale</h2>
+                <p>Process sales with loyalty program, automatic discounts, and real-time tracking</p>
+                <button class="system-btn">Open POS →</button>
+            </a>
+
+            <!-- Admin Panel -->
+            <a href="admin.html" class="system-card">
+                <div class="system-icon">⚙️</div>
+                <h2>Admin Panel</h2>
+                <p>Manage products, inventory, recipes, employees, and view detailed reports</p>
+                <button class="system-btn">Go to Admin →</button>
+            </a>
+
+            <!-- Customers -->
+            <a href="customers.html" class="system-card">
+                <div class="system-icon">🎁</div>
+                <h2>Loyalty Program</h2>
+                <p>Manage customers, loyalty tiers (Bronze/Silver/Gold), and rewards tracking</p>
+                <button class="system-btn">Manage Customers →</button>
+            </a>
+
+            <!-- Employees -->
+            <a href="employees.html" class="system-card">
+                <div class="system-icon">👨‍💼</div>
+                <h2>Employee Management</h2>
+                <p>Manage staff, roles, payroll, and performance tracking</p>
+                <button class="system-btn">Manage Staff →</button>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 Pork Shop Management System | All Rights Reserved</p>
+        </div>
+    </div>
+
+    <script src="js/data-service.js"></script>
+    <script>
+        // Initialize and load stats on page load
+        function initializeStats() {
+            // Load daily stats
+            const dailyStats = JSON.parse(localStorage.getItem('dailyStats') || '{"transactions":0,"totalRevenue":0,"itemsSold":0}');
+            document.getElementById('statTransactions').textContent = dailyStats.transactions;
+            document.getElementById('statRevenue').textContent = '₱' + dailyStats.totalRevenue.toFixed(2);
+            document.getElementById('statItems').textContent = dailyStats.itemsSold;
+
+            // Load customer count
+            const customers = PorkShopDataService.getCustomers();
+            document.getElementById('statCustomers').textContent = customers.length;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            PorkShopDataService.init();
+            initializeStats();
+        };
+    </script>
 </body>
+
 </html>
