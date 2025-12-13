@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live Order Entry Production Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2,
+        h3 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: right;
+        }
+
+        th {
+            background-color: #e8e8e8;
+            font-weight: bold;
+        }
+
+        .recipe-input {
+            width: 80px;
+            text-align: right;
+            border: 2px solid #007bff;
+        }
+
+        .calculation-result {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        .total-row td {
+            background-color: #d0e8ff;
+            font-size: 1.1em;
+        }
+
+        .grind-col {
+            color: #dc3545;
+        }
+
+        .need-col {
+            color: #28a745;
+        }
+
+        #saveButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #saveButton:hover {
+            background-color: #1e7e34;
+        }
+
+        #logMessage {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .reset-button {
+            margin-top: 10px;
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .reset-button:hover {
+            background-color: #5a6268;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            color: #0c5460;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>� Live Order Entry Production Planner</h2>
+        <p style="color: #666; margin: 10px 0;">Enter customer orders below to calculate production batches and
+            ingredient requirements</p>
+        <div id="logMessage">Date : <span id="dateTime"></span></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Recipe No</th>
+                    <th>Base Chicken (units)</th>
+                    <th>Base Pork (units)</th>
+                    <th>Total Base (units)</th>
+                    <th>Customer Order (INPUT)</th>
+                    <th class="grind-col">Total Grind (Batches)</th>
+                    <th class="need-col">Need Chicken (units)</th>
+                    <th class="need-col">Pork Need (units)</th>
+                </tr>
+            </thead>
+            <tbody id="recipeBody">
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="4">**GRAND TOTALS**</td>
+                    <td id="totalOrder" class="calculation-result">0</td>
+                    <td id="totalGrind" class="calculation-result grind-col">0.00</td>
+                    <td id="totalNeedChicken" class="calculation-result need-col">0</td>
+                    <td id="totalNeedPork" class="calculation-result need-col">0</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="button-group">
+            <button id="saveButton" onclick="savePlan()">💾 Save Production Plan</button>
+            <button class="reset-button" onclick="resetPlan()">🔄 Reset All</button>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Define the base recipe data (from the image)
+        const recipes = [
+            { id: 'no1', baseC: 20, baseP: 3, total: 23, order: 69 },
+            { id: 'no2', baseC: 20, baseP: 5, total: 25, order: 350 },
+            { id: 'no3', baseC: 20, baseP: 9, total: 29, order: 145 },
+            { id: 'No 4', baseC: 20, baseP: 14, total: 34, order: 170 }
+        ];
+
+        // --- Date Formatting Function (FIXED) ---
+
+        function formatDateTime(date) {
+            // Options for DD/MM/YYYY HH:MM:SS (24-hour time)
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            // Use 'en-GB' locale for guaranteed DD/MM/YYYY order
+            const formatter = new Intl.DateTimeFormat('en-GB', options);
+            return formatter.format(date).replace(',', ''); // Remove the comma for a cleaner look
+        }
+
+        function updateDateTime() {
+            document.getElementById('dateTime').textContent = formatDateTime(new Date());
+        }
+
+        // --- Core Calculation Functions (unchanged) ---
+
+        function createTableRows() {
+            const body = document.getElementById('recipeBody');
+            body.innerHTML = '';
+            recipes.forEach((recipe, index) => {
+                const row = body.insertRow();
+                row.id = `row-${index}`;
+
+                row.insertCell().textContent = recipe.id;
+                row.insertCell().textContent = recipe.baseC;
+                row.insertCell().textContent = recipe.baseP;
+                row.insertCell().textContent = recipe.total;
+
+                const orderCell = row.insertCell();
+                orderCell.innerHTML = `<input type="number" id="order-${index}" class="recipe-input" value="${recipe.order}" oninput="calculateRow(${index})" min="0">`;
+
+                row.insertCell().id = `grind-${index}`;
+                row.insertCell().id = `needC-${index}`;
+                row.insertCell().id = `needP-${index}`;
+            });
+            updateDateTime();
+            calculateAll();
+        }
+
+        function calculateRow(index) {
+            const recipe = recipes[index];
+            const customerOrder = parseFloat(document.getElementById(`order-${index}`).value) || 0;
+            const totalBase = recipe.total;
+
+            const totalGrind = (totalBase > 0) ? customerOrder / totalBase : 0;
+
+            const needChicken = Math.ceil(recipe.baseC * totalGrind);
+            const needPork = Math.ceil(recipe.baseP * totalGrind);
+
+            document.getElementById(`grind-${index}`).textContent = totalGrind.toFixed(2);
+            document.getElementById(`needC-${index}`).textContent = needChicken.toFixed(0);
+            document.getElementById(`needP-${index}`).textContent = needPork.toFixed(0);
+
+            updateDateTime();
+            calculateTotals();
+        }
+
+        function calculateAll() {
+            for (let i = 0; i < recipes.length; i++) {
+                calculateRow(i);
+            }
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let totalOrder = 0;
+            let totalGrind = 0;
+            let totalNeedC = 0;
+            let totalNeedP = 0;
+
+            for (let i = 0; i < recipes.length; i++) {
+                totalOrder += parseFloat(document.getElementById(`order-${i}`).value) || 0;
+                totalGrind += parseFloat(document.getElementById(`grind-${i}`).textContent) || 0;
+                totalNeedC += parseFloat(document.getElementById(`needC-${i}`).textContent) || 0;
+                totalNeedP += parseFloat(document.getElementById(`needP-${i}`).textContent) || 0;
+            }
+
+            document.getElementById('totalOrder').textContent = totalOrder.toFixed(0);
+            document.getElementById('totalGrind').textContent = totalGrind.toFixed(2);
+            document.getElementById('totalNeedChicken').textContent = totalNeedC.toFixed(0);
+            document.getElementById('totalNeedPork').textContent = totalNeedP.toFixed(0);
+        }
+
+        // --- Save Function (Updated to use the fixed format) ---
+
+        async function savePlan() {
+            // Fetch the date string using the new format
+            const dateTime = document.getElementById('dateTime').textContent;
+
+            const totalGrind = parseFloat(document.getElementById('totalGrind').textContent);
+
+            const dataToSave = {
+                timestamp: dateTime, // This timestamp is now in DD/MM/YYYY format
+                totals: {
+                    total_units_ordered: parseFloat(document.getElementById('totalOrder').textContent),
+                    total_batches_required: totalGrind,
+                    total_chicken_needed: parseFloat(document.getElementById('totalNeedChicken').textContent),
+                    total_pork_needed: parseFloat(document.getElementById('totalNeedPork').textContent)
+                },
+                details: recipes.map((recipe, index) => ({
+                    id: recipe.id,
+                    order_qty: parseFloat(document.getElementById(`order-${index}`).value),
+                    total_grind: parseFloat(document.getElementById(`grind-${index}`).textContent),
+                    required_chicken: parseFloat(document.getElementById(`needC-${index}`).textContent),
+                    required_pork: parseFloat(document.getElementById(`needP-${index}`).textContent)
+                }))
+            };
+
+            const log = document.getElementById('logMessage');
+            const SERVER_ENDPOINT = '/api/save_daily_production_plan';
+
+            log.innerHTML = `Transaction Log: **Sending daily plan to server at ${SERVER_ENDPOINT}...**`;
+
+            // --- SIMULATED SERVER COMMUNICATION ---
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            log.innerHTML = `Transaction Log: ✅ **Plan Saved Successfully!** (Total Batches: ${totalGrind.toFixed(2)}) at ${dateTime}`;
+            console.log("Production Plan Data Sent (Simulated):", dataToSave);
+        }
+
+        // Reset function to clear all orders
+        function resetPlan() {
+            if (confirm('Are you sure you want to reset all orders? This cannot be undone.')) {
+                recipes.forEach((recipe, index) => {
+                    document.getElementById(`order-${index}`).value = 0;
+                    calculateRow(index);
+                });
+                document.getElementById('logMessage').innerHTML = `Transaction Log: ✨ <strong>All orders reset!</strong> Ready for new entries at ${formatDateTime(new Date())}`;
+            }
+        }
+
+        // Initialize the application when the page loads
+        window.onload = createTableRows;
+    </script>
+
+</body>
+
+</html>

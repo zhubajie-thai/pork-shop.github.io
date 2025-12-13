@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pork Shop Management Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .card-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .card-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐷 Pork Shop Management</h1>
+            <p>Complete Business Management Suite</p>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Production Planner Card -->
+            <a href="index.html" class="card">
+                <div class="card-icon">📊</div>
+                <h2>Production Planner</h2>
+                <p>Manage recipe production, calculate batch requirements, and track ingredient needs for multiple recipes in real-time.</p>
+                <button class="card-btn">Open →</button>
+                <div class="badge">4 Recipes</div>
+            </a>
+
+            <!-- POS System Card -->
+            <a href="pos.html" class="card">
+                <div class="card-icon">💳</div>
+                <h2>POS System</h2>
+                <p>Complete point-of-sale solution with cart management, multiple payment methods, receipts, and daily sales tracking.</p>
+                <button class="card-btn">Open →</button>
+                <div class="badge">8 Products</div>
+            </a>
+
+            <!-- Admin Panel Card -->
+            <a href="admin.html" class="card">
+                <div class="card-icon">🔐</div>
+                <h2>Admin Panel</h2>
+                <p>Complete backend control with product management, inventory tracking, recipe configuration, and business reports.</p>
+                <button class="card-btn">Open →</button>
+                <div class="badge">Full Control</div>
+            </a>
+
+            <!-- Analytics Card -->
+            <a href="#" class="card" style="opacity: 0.7;">
+                <div class="card-icon">📈</div>
+                <h2>Analytics</h2>
+                <p>View detailed sales reports, revenue trends, and performance metrics for your business.</p>
+                <button class="card-btn" disabled style="opacity: 0.5;">Coming Soon</button>
+                <div class="badge">Soon</div>
+            </a>
+
+            <!-- Customer Management Card -->
+            <a href="#" class="card" style="opacity: 0.7;">
+                <div class="card-icon">👥</div>
+                <h2>Customers</h2>
+                <p>Manage customer information, order history, and loyalty program details.</p>
+                <button class="card-btn" disabled style="opacity: 0.5;">Coming Soon</button>
+                <div class="badge">Soon</div>
+            </a>
+
+            <!-- Settings Card -->
+            <a href="#" class="card" style="opacity: 0.7;">
+                <div class="card-icon">⚙️</div>
+                <h2>Settings</h2>
+                <p>Configure business settings, pricing, product categories, and system preferences.</p>
+                <button class="card-btn" disabled style="opacity: 0.5;">Coming Soon</button>
+                <div class="badge">Soon</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>🐷 Pork Shop Management Suite v1.0 | © 2025 All Rights Reserved</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pork Shop POS System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: #8B4513;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0e6d2;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #fff9f0 0%, #ffe8cc 100%);
+            border: 2px solid #d4a574;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+            border-color: #8B4513;
+        }
+
+        .product-card h3 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-card .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 5px;
+        }
+
+        .product-card .qty-btn {
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .product-card .qty-btn:hover {
+            background-color: #6b3410;
+        }
+
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .cart-item-price {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+        }
+
+        .qty-btn-small {
+            background-color: #ddd;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .qty-btn-small:hover {
+            background-color: #bbb;
+        }
+
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+
+        .summary {
+            background-color: #f0e6d2;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8B4513;
+            border-top: 2px solid #d4a574;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-checkout {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-checkout:hover {
+            background-color: #218838;
+        }
+
+        .btn-checkout:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+        .payment-method {
+            margin-bottom: 15px;
+        }
+
+        .payment-method label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: #8B4513;
+        }
+
+        .payment-option.active {
+            background-color: #8B4513;
+            color: white;
+            border-color: #8B4513;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .receipt {
+            background-color: white;
+            border: 2px solid #8B4513;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 500px;
+            overflow-y: auto;
+            display: none;
+            margin-top: 15px;
+        }
+
+        .receipt.show {
+            display: block;
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #8B4513;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .receipt-footer {
+            border-top: 2px solid #8B4513;
+            padding-top: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .transaction-log {
+            background-color: #f0e6d2;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #333;
+            text-align: center;
+        }
+
+        .stat-box {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #8B4513;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .loyalty-info {
+            background-color: #fff9f0;
+            border: 2px solid #d4a574;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .loyalty-tier {
+            font-size: 12px;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .loyalty-points {
+            font-size: 14px;
+            color: #333;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .main-container {
+                display: block;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+
+            .product-grid,
+            .button-group {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="
+                <!-- Customer Loyalty Section -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; color: #333; margin-bottom: 5px; display: block;">🎁 Loyalty Customer:</label>
+                    <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                        <input type="text" id="customerPhone" placeholder="Enter phone # (optional)" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <button onclick="searchCustomer()" style="padding: 8px 15px; background-color: #8B4513; color: white; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+                    </div>
+                    <div id="loyaltyInfo"></div>
+                </div>
+
+                header">
+        <h1>🐷 Pork Shop POS System</h1>
+        <p>Point of Sale Management System | Loyalty Program Enabled</p>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Column: Products -->
+        <div>
+            <div class="section">
+                <h2>Products</h2>
+                <div class="product-grid" id="productGrid">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Cart & Checkout -->
+        <div>
+            <div class="section">
+                <h2>Shopping Cart</h2>
+                <div class="cart-items" id="cartItems">
+                    <p style="text-align: center; color: #999; padding: 20px;">Cart is empty</p>
+                </div>
+
+                <div class="summary" id="summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">₱ 0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount (%):</span>
+                        <input type="number" id="discountPercent" min="0" max="100" value="0"
+                            style="width: 60px; padding: 4px;" oninput="updateSummary()">
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount Amt:</span>
+                        <span id="discountAmt">₱ 0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">₱ 0.00</span>
+                    </div>
+                </div>
+
+                <div class="payment-method">
+                    <label>Payment Method:</label>
+                    <div class="payment-options">
+                        <div class="payment-option active" data-method="cash"
+                            onclick="selectPayment('cash', this)">💵 Cash</div>
+                        <div class="payment-option" data-method="card"
+                            onclick="selectPayment('card', this)">💳 Card</div>
+                    </div>
+                </div>
+
+                <div id="paymentDetails"></div>
+
+                <div class="button-group">
+                    <button class="btn btn-checkout" onclick="checkout()">✓ Checkout</button>
+                    <button class="btn btn-cancel" onclick="clearCart()">✕ Clear Cart</button>
+                </div>
+
+                <div class="transaction-log" id="transactionLog">Ready for transaction...</div>
+
+                <div class="receipt" id="receipt"></div>
+            </div>
+
+            <div class="section">
+                <h2>Daily Summary</h2>
+                <div class="stat-box">
+                    <div class="stat-label">Total Transactions</div>
+                    <div class="stat-value" id="transCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Daily Revenue</div>
+                    <div class="stat-value" id="dailyRevenue">₱ 0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Items Sold</div>
+                    <div class="stat-value" id="itemsSold">0</div>
+                </div>
+                <button class="btn btn-checkout" onclick="printReport()" style="margin-top: 10px;">🖨️ Print Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data-service.js"></script>
+    <script>
+        // Product Database
+        const products = [
+            { id: 1, name: 'Fried Pork (kg)', category: 'Recipe 1', price: 450, icon: '🍖' },
+            { id: 2, name: 'Grilled Pork (kg)', category: 'Recipe 2', price: 520, icon: '🔥' },
+            { id: 3, name: 'Roasted Pork (kg)', category: 'Recipe 3', price: 580, icon: '🍗' },
+            { id: 4, name: 'Pork Adobo (kg)', category: 'Recipe 4', price: 650, icon: '🥘' },
+            { id: 5, name: 'Ground Pork (kg)', category: 'Fresh', price: 380, icon: '🌪️' },
+            { id: 6, name: 'Pork Belly (kg)', category: 'Fresh', price: 420, icon: '⬜' },
+            { id: 7, name: 'Pork Chops (kg)', category: 'Fresh', price: 480, icon: '🥩' },
+            { id: 8, name: 'Chicken Breast (kg)', category: 'Fresh', price: 320, icon: '🐔' },
+        ];
+
+        let cart = [];
+        let currentCustomer = null;
+        let dailyStats = {
+            transactions: 0,
+            totalRevenue: 0,
+            itemsSold: 0
+        };
+
+        // Initialize POS
+        function initPOS() {
+            loadProducts();
+            selectPayment('cash', document.querySelector('[data-method="cash"]'));
+            loadDailyStats();
+        }
+
+        // Load Products
+        function loadProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div style="font-size: 32px; margin-bottom: 5px;">${product.icon}</div>
+                    <h3>${product.name}</h3>
+                    <div class="price">₱ ${product.price.toFixed(2)}</div>
+                    <button class="qty-btn" onclick="addToCart(${product.id})">Add to Cart</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search Customer for Loyalty Program
+        function searchCustomer() {
+            const phone = document.getElementById('customerPhone').value;
+            if (!phone) {
+                alert('Please enter customer phone number');
+                return;
+            }
+
+            const customers = PorkShopDataService.getCustomers();
+            currentCustomer = customers.find(c => c.phone === phone);
+
+            if (currentCustomer) {
+                const loyalty = PorkShopDataService.getCustomerLoyaltyStatus(currentCustomer.id);
+                document.getElementById('loyaltyInfo').innerHTML = `
+                    <div class="loyalty-info">
+                        <div class="loyalty-tier">👤 ${currentCustomer.name}</div>
+                        <div class="loyalty-points">Tier: ${loyalty.tier} | Points: ${loyalty.points}</div>
+                        <div class="loyalty-points">Discount: ${loyalty.rewardDiscount}%</div>
+                    </div>
+                `;
+                updateSummary();
+            } else {
+                alert('Customer not found. Create new customer in admin panel.');
+                currentCustomer = null;
+                document.getElementById('loyaltyInfo').innerHTML = '';
+            }
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+
+            updateCart();
+            document.getElementById('transactionLog').textContent = `✓ Added ${product.name} to cart`;
+        }
+
+        // Update Cart Display
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Cart is empty</p>';
+                return;
+            }
+
+            cartItems.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₱ ${item.price.toFixed(2)} each</div>
+                    </div>
+                    <div class="cart-item-qty">
+                        <button class="qty-btn-small" onclick="updateQty(${index}, -1)">−</button>
+                        <span style="width: 30px; text-align: center; font-weight: bold;">${item.qty}</span>
+                        <button class="qty-btn-small" onclick="updateQty(${index}, 1)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        // Update Quantity
+        function updateQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                removeFromCart(index);
+            } else {
+                updateCart();
+            }
+        }
+
+        // Remove from Cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Update Summary
+        function updateSummary() {
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let loyaltyDiscount = 0;
+
+            // Apply loyalty discount if customer is found
+            if (currentCustomer) {
+                const loyalty = PorkShopDataService.getCustomerLoyaltyStatus(currentCustomer.id);
+                loyaltyDiscount = subtotal * (loyalty.rewardDiscount / 100);
+            }
+
+            const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
+            const manualDiscount = subtotal * (discountPercent / 100);
+            const totalDiscount = loyaltyDiscount + manualDiscount;
+            const total = subtotal - totalDiscount;
+
+            document.getElementById('subtotal').textContent = `₱ ${subtotal.toFixed(2)}`;
+            document.getElementById('discountAmt').textContent = `₱ ${totalDiscount.toFixed(2)}`;
+            document.getElementById('total').textContent = `₱ ${total.toFixed(2)}`;
+
+            return { subtotal, totalDiscount, total };
+        }
+
+        // Select Payment Method
+        function selectPayment(method, element) {
+            document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const details = document.getElementById('paymentDetails');
+            if (method === 'cash') {
+                details.innerHTML = `
+                    <div class="input-group">
+                        <label>Cash Received (₱):</label>
+                        <input type="number" id="cashReceived" placeholder="0.00" oninput="calculateChange()">
+                    </div>
+                    <div class="summary-row">
+                        <span>Change:</span>
+                        <span id="change">₱ 0.00</span>
+                    </div>
+                `;
+            } else {
+                details.innerHTML = `
+                    <div class="input-group">
+                        <label>Card Number:</label>
+                        <input type="text" placeholder="**** **** **** 1234" readonly>
+                    </div>
+                    <div class="input-group">
+                        <label>Reference Number:</label>
+                        <input type="text" id="refNumber" placeholder="Enter reference...">
+                    </div>
+                `;
+            }
+        }
+
+        // Calculate Change
+        function calculateChange() {
+            const { total } = updateSummary();
+            const cashReceived = parseFloat(document.getElementById('cashReceived').value) || 0;
+            const change = cashReceived - total;
+            document.getElementById('change').textContent = `₱ ${change.toFixed(2)}`;
+        }
+
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Cart is empty!');
+                return;
+            }
+
+            const { subtotal, totalDiscount, total } = updateSummary();
+            const paymentMethod = document.querySelector('.payment-option.active').dataset.method;
+
+            // Validation
+            if (paymentMethod === 'cash') {
+                const cashReceived = parseFloat(document.getElementById('cashReceived').value) || 0;
+                if (cashReceived < total) {
+                    alert('Insufficient cash!');
+                    return;
+                }
+            }
+
+            // Record sale
+            const saleData = {
+                customer: currentCustomer ? currentCustomer.name : 'Walk-in',
+                customerId: currentCustomer ? currentCustomer.id : null,
+                items: cart,
+                subtotal,
+                discount: totalDiscount,
+                total,
+                paymentMethod
+            };
+
+            const sale = PorkShopDataService.recordSale(saleData);
+
+            // Add loyalty points if customer
+            if (currentCustomer) {
+                const pointsEarned = Math.floor(total);
+                PorkShopDataService.addLoyaltyPoints(currentCustomer.id, pointsEarned);
+                alert(`✓ Customer earned ${pointsEarned} loyalty points!`);
+            }
+
+            // Generate Receipt
+            generateReceipt(subtotal, totalDiscount, total, paymentMethod);
+
+            // Update Stats
+            dailyStats.transactions++;
+            dailyStats.totalRevenue += total;
+            dailyStats.itemsSold += cart.reduce((sum, item) => sum + item.qty, 0);
+            saveDailyStats();
+
+            // Clear and Reset
+            setTimeout(() => {
+                clearCart();
+                document.getElementById('transactionLog').innerHTML = `✅ <strong>Transaction Completed!</strong> Total: ₱ ${total.toFixed(2)}`;
+            }, 500);
+        }
+
+        // Generate Receipt
+        function generateReceipt(subtotal, totalDiscount, total, paymentMethod) {
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-PH');
+
+            let receiptHTML = `
+                <div class="receipt-header">
+                    <strong>🐷 PORK SHOP</strong><br>
+                    Receipt<br>
+                    ${timestamp}
+                </div>
+                <div style="margin-bottom: 10px; border-bottom: 1px dashed #333; padding-bottom: 10px;">
+            `;
+
+            cart.forEach(item => {
+                const itemTotal = (item.price * item.qty).toFixed(2);
+                receiptHTML += `
+                    <div class="receipt-item">
+                        <span>${item.name} x${item.qty}</span>
+                        <span>₱ ${itemTotal}</span>
+                    </div>
+                `;
+            });
+
+            receiptHTML += `
+                </div>
+                <div class="receipt-item">
+                    <span>Subtotal:</span>
+                    <span>₱ ${subtotal.toFixed(2)}</span>
+                </div>
+            `;
+
+            if (totalDiscount > 0) {
+                receiptHTML += `
+                    <div class="receipt-item">
+                        <span>Discount:</span>
+                        <span>-₱ ${totalDiscount.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            if (currentCustomer) {
+                receiptHTML += `
+                    <div class="receipt-item">
+                        <span>Customer:</span>
+                        <span>${currentCustomer.name}</span>
+                    </div>
+                `;
+            }
+
+            receiptHTML += `
+                <div class="receipt-footer">
+                    <strong>TOTAL: ₱ ${total.toFixed(2)}</strong><br>
+                    <br>
+                    Payment: ${paymentMethod.toUpperCase()}<br>
+                    <br>
+                    Thank you for your purchase!<br>
+                    <br>
+                    Transaction ID: ${now.getTime()}<br>
+                    ${new Date().toLocaleDateString('en-PH')}
+                </div>
+            `;
+
+            const receipt = document.getElementById('receipt');
+            receipt.innerHTML = receiptHTML;
+            receipt.classList.add('show');
+        }
+
+        // Clear Cart
+        function clearCart() {
+            cart = [];
+            currentCustomer = null;
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('loyaltyInfo').innerHTML = '';
+            document.getElementById('cartItems').innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Cart is empty</p>';
+            document.getElementById('summary').innerHTML = `
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">₱ 0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount (%):</span>
+                    <input type="number" id="discountPercent" min="0" max="100" value="0"
+                        style="width: 60px; padding: 4px;" oninput="updateSummary()">
+                </div>
+                <div class="summary-row">
+                    <span>Discount Amt:</span>
+                    <span id="discountAmt">₱ 0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="total">₱ 0.00</span>
+                </div>
+            `;
+            document.getElementById('receipt').classList.remove('show');
+            document.getElementById('transactionLog').textContent = 'Cart cleared. Ready for new transaction...';
+        }
+
+        // Daily Stats
+        function saveDailyStats() {
+            localStorage.setItem('dailyStats', JSON.stringify(dailyStats));
+            updateStatsDisplay();
+        }
+
+        function loadDailyStats() {
+            const saved = localStorage.getItem('dailyStats');
+            if (saved) {
+                dailyStats = JSON.parse(saved);
+            }
+            updateStatsDisplay();
+        }
+
+        function updateStatsDisplay() {
+            document.getElementById('transCount').textContent = dailyStats.transactions;
+            document.getElementById('dailyRevenue').textContent = `₱ ${dailyStats.totalRevenue.toFixed(2)}`;
+            document.getElementById('itemsSold').textContent = dailyStats.itemsSold;
+        }
+
+        // Print Report
+        function printReport() {
+            const report = `
+PORK SHOP - DAILY REPORT
+Date: ${new Date().toLocaleDateString('en-PH')}
+
+Total Transactions: ${dailyStats.transactions}
+Total Items Sold: ${dailyStats.itemsSold}
+Total Revenue: ₱ ${dailyStats.totalRevenue.toFixed(2)}
+
+Generated: ${new Date().toLocaleString('en-PH')}
+            `;
+            console.log(report);
+            window.print();
+        }
+
+        // Initialize on Load
+        window.onload = initPOS;
+    </script>
+
+</body>
+
+</html>
