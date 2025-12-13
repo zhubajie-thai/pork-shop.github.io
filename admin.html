@@ -403,9 +403,10 @@
             <li><a onclick="showSection('products')" class="menu-link">📦 Products</a></li>
             <li><a onclick="showSection('inventory')" class="menu-link">📈 Inventory</a></li>
             <li><a onclick="showSection('recipes')" class="menu-link">🍳 Recipes</a></li>
+            <li><a onclick="showSection('production')" class="menu-link">📝 Production Plan</a></li>
             <li><a onclick="showSection('reports')" class="menu-link">📋 Reports</a></li>
             <li><a onclick="showSection('settings')" class="menu-link">⚙️ Settings</a></li>
-            <li><a href="dashboard.html" style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">← Back to Main</a></li>
+            <li><a href="index.html" style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">← Back to Main</a></li>
         </ul>
     </div>
 
@@ -553,6 +554,39 @@
                         <tbody id="recipesList">
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Production Plan Section -->
+        <div id="production" class="section">
+            <div class="content-card">
+                <h2>📝 Production Planner</h2>
+                <p style="color: #666; margin-bottom: 20px;">Plan daily production batches based on recipes</p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="background-color: #f5f5f5;">
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Recipe</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Base Chicken (kg)</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Base Pork (kg)</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Total Base (kg)</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Batches Needed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productionTable">
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="calculateProduction()">Calculate Requirements</button>
+                    <button class="btn btn-success" onclick="savePlan()">💾 Save Plan</button>
+                    <button class="btn btn-secondary" onclick="resetPlan()">Reset</button>
+                </div>
+
+                <div id="productionSummary" style="margin-top: 20px; padding: 15px; background-color: #f0f8ff; border-radius: 4px; display: none;">
+                    <h3>Production Summary</h3>
+                    <p id="summaryText"></p>
                 </div>
             </div>
         </div>
@@ -742,6 +776,7 @@
             displayProducts();
             displayInventory();
             displayRecipes();
+            initProductionPlanner();
             loadSettings();
             document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
         }
@@ -758,6 +793,7 @@
                 'products': 'Product Management',
                 'inventory': 'Inventory Management',
                 'recipes': 'Recipe Management',
+                'production': 'Production Planner',
                 'reports': 'Business Reports',
                 'settings': 'System Settings'
             };
@@ -938,6 +974,62 @@
 
         function editRecipe(id) {
             alert('Edit recipe functionality coming soon!');
+        }
+
+        // Production Plan Functions
+        function initProductionPlanner() {
+            const tbody = document.getElementById('productionTable');
+            tbody.innerHTML = recipes.map((r, idx) => `
+                <tr style="border: 1px solid #ddd;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><strong>Recipe ${r.id}</strong></td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${r.baseC}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${r.baseP}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${r.total}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                        <input type="number" id="batch_${idx}" min="0" value="0" max="100" style="width: 60px; padding: 5px;">
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function calculateProduction() {
+            let totalChicken = 0, totalPork = 0, totalBase = 0;
+            let summary = '<strong>Production Requirements:</strong><br>';
+
+            recipes.forEach((r, idx) => {
+                const batches = parseInt(document.getElementById(`batch_${idx}`).value) || 0;
+                if (batches > 0) {
+                    const chicken = r.baseC * batches;
+                    const pork = r.baseP * batches;
+                    totalChicken += chicken;
+                    totalPork += pork;
+                    totalBase += r.total * batches;
+                    summary += `Recipe ${r.id}: ${batches} batch(es) = ${chicken}kg Chicken + ${pork}kg Pork<br>`;
+                }
+            });
+
+            summary += `<br><strong>TOTAL: ${totalChicken}kg Chicken + ${totalPork}kg Pork = ${totalBase}kg</strong>`;
+            document.getElementById('summaryText').textContent = summary;
+            document.getElementById('productionSummary').style.display = 'block';
+        }
+
+        function savePlan() {
+            const plan = {
+                date: new Date().toLocaleDateString(),
+                recipes: recipes.map((r, idx) => ({
+                    recipeId: r.id,
+                    batches: parseInt(document.getElementById(`batch_${idx}`).value) || 0
+                }))
+            };
+            localStorage.setItem('productionPlan_' + Date.now(), JSON.stringify(plan));
+            alert('✓ Production plan saved!');
+        }
+
+        function resetPlan() {
+            recipes.forEach((r, idx) => {
+                document.getElementById(`batch_${idx}`).value = 0;
+            });
+            document.getElementById('productionSummary').style.display = 'none';
         }
 
         // Report Functions
