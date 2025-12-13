@@ -1,3 +1,11 @@
+    <!-- Auth Check -->
+    <script>
+        if (!localStorage.getItem('currentUser')) {
+            alert('Please login first');
+            window.location.href = 'index.html';
+        }
+    </script>
+
 <!DOCTYPE html>
 <html lang="en">
 

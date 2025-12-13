@@ -1,3 +1,15 @@
+    <!-- Auth Check -->
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser.name) {
+            alert('Please login first');
+            window.location.href = 'index.html';
+        } else if (currentUser.role !== 'manager') {
+            alert('Manager access only');
+            window.location.href = 'index.html';
+        }
+    </script>
+
 <!DOCTYPE html>
 <html lang="en">
 

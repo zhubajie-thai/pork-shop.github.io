@@ -22,6 +22,108 @@
             padding: 20px;
         }
 
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+            display: none;
+        }
+
+        .login-container.show {
+            display: block;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .login-form input,
+        .login-form select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .login-form input:focus,
+        .login-form select:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+
+        .login-form label {
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #8B4513 0%, #6b3410 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 69, 19, 0.4);
+        }
+
+        .demo-users {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .demo-users h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .demo-user {
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            width: 100%;
+            display: none;
+        }
+
+        .dashboard-container.show {
+            display: block;
+        }
+
         .container {
             max-width: 1200px;
             width: 100%;
@@ -31,6 +133,13 @@
             text-align: center;
             color: white;
             margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            flex: 1;
         }
 
         .header h1 {
@@ -42,6 +151,32 @@
         .header p {
             font-size: 20px;
             opacity: 0.9;
+        }
+
+        .user-info {
+            color: white;
+            text-align: right;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info span {
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .systems-grid {
@@ -68,6 +203,11 @@
         .system-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .system-card.disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .system-icon {
@@ -104,6 +244,16 @@
         .system-btn:hover {
             background: linear-gradient(135deg, #a0522d 0%, #8B4513 100%);
             transform: scale(1.05);
+        }
+
+        .restricted {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .restricted:hover {
+            background: #ccc;
+            transform: none;
         }
 
         .stats-section {
@@ -155,9 +305,27 @@
             opacity: 0.8;
         }
 
+        .role-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
             .header h1 {
                 font-size: 36px;
+            }
+
+            .user-info {
+                justify-content: center;
             }
 
             .systems-grid {
@@ -171,90 +339,232 @@
             .stat-value {
                 font-size: 24px;
             }
+
+            .login-container {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🐷 Pork Shop Management System</h1>
-            <p>Complete Business Management Solution</p>
+    <!-- Login Section -->
+    <div class="login-container show" id="loginContainer">
+        <div class="login-header">
+            <h1>🐷</h1>
+            <h2>Pork Shop</h2>
+            <p>Management System</p>
         </div>
 
-        <!-- Quick Stats -->
-        <div class="stats-section" id="statsSection">
-            <h2>📊 Today's Overview</h2>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-label">Transactions</div>
-                    <div class="stat-value" id="statTransactions">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Revenue</div>
-                    <div class="stat-value" id="statRevenue">₱0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Items Sold</div>
-                    <div class="stat-value" id="statItems">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Customers</div>
-                    <div class="stat-value" id="statCustomers">0</div>
-                </div>
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div>
+                <label>👤 Name:</label>
+                <input type="text" id="loginName" placeholder="Enter your name" required>
+            </div>
+
+            <div>
+                <label>👔 Role:</label>
+                <select id="loginRole" required>
+                    <option value="">Select Role...</option>
+                    <option value="sales">Sales Staff (POS Only)</option>
+                    <option value="manager">Manager (Full Access)</option>
+                </select>
+            </div>
+
+            <div>
+                <label>💱 Currency:</label>
+                <select id="loginCurrency" required>
+                    <option value="₱">₱ Philippine Peso</option>
+                    <option value="$">$ US Dollar</option>
+                    <option value="€">€ Euro</option>
+                    <option value="£">£ British Pound</option>
+                    <option value="¥">¥ Japanese Yen</option>
+                </select>
+            </div>
+
+            <button type="submit" class="login-btn">🔓 Login</button>
+        </form>
+
+        <div class="demo-users">
+            <h4>Demo Users:</h4>
+            <div class="demo-user"><strong>Sales:</strong> Quick auto-fill for POS</div>
+            <div class="demo-user"><strong>Manager:</strong> Full system access</div>
+            <div style="margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
+                <button type="button" onclick="quickLogin('Sales', 'sales')" class="login-btn" style="background: #27ae60; margin-bottom: 5px;">Quick Demo: Sales</button>
+                <button type="button" onclick="quickLogin('Manager', 'manager')" class="login-btn" style="background: #e74c3c;">Quick Demo: Manager</button>
             </div>
         </div>
+    </div>
 
-        <!-- Main Systems Grid -->
-        <div class="systems-grid">
-            <!-- POS System -->
-            <a href="pos.html" class="system-card">
-                <div class="system-icon">💳</div>
-                <h2>Point of Sale</h2>
-                <p>Process sales with loyalty program, automatic discounts, and real-time tracking</p>
-                <button class="system-btn">Open POS →</button>
-            </a>
+    <!-- Dashboard Section -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-title">
+                    <h1>🐷 Pork Shop Management</h1>
+                    <p>Complete Business Management Solution</p>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div>Welcome, <strong id="userName">User</strong></div>
+                        <span class="role-badge" id="userRoleBadge">Role</span>
+                        <div id="currencyDisplay" style="font-size: 12px; margin-top: 5px;">Currency: ₱</div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+                </div>
+            </div>
 
-            <!-- Admin Panel -->
-            <a href="admin.html" class="system-card">
-                <div class="system-icon">⚙️</div>
-                <h2>Admin Panel</h2>
-                <p>Manage products, inventory, recipes, employees, and view detailed reports</p>
-                <button class="system-btn">Go to Admin →</button>
-            </a>
+            <!-- Quick Stats -->
+            <div class="stats-section" id="statsSection">
+                <h2>📊 Today's Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Transactions</div>
+                        <div class="stat-value" id="statTransactions">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Revenue</div>
+                        <div class="stat-value" id="statRevenue">₱0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Items Sold</div>
+                        <div class="stat-value" id="statItems">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Customers</div>
+                        <div class="stat-value" id="statCustomers">0</div>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Customers -->
-            <a href="customers.html" class="system-card">
-                <div class="system-icon">🎁</div>
-                <h2>Loyalty Program</h2>
-                <p>Manage customers, loyalty tiers (Bronze/Silver/Gold), and rewards tracking</p>
-                <button class="system-btn">Manage Customers →</button>
-            </a>
+            <!-- Main Systems Grid -->
+            <div class="systems-grid">
+                <!-- POS System -->
+                <a href="pos.html" class="system-card" id="posCard">
+                    <div class="system-icon">💳</div>
+                    <h2>Point of Sale</h2>
+                    <p>Process sales with loyalty program, automatic discounts, and real-time tracking</p>
+                    <button class="system-btn">Open POS →</button>
+                </a>
 
-            <!-- Employees -->
-            <a href="employees.html" class="system-card">
-                <div class="system-icon">👨‍💼</div>
-                <h2>Employee Management</h2>
-                <p>Manage staff, roles, payroll, and performance tracking</p>
-                <button class="system-btn">Manage Staff →</button>
-            </a>
-        </div>
+                <!-- Admin Panel -->
+                <a href="admin.html" class="system-card" id="adminCard">
+                    <div class="system-icon">⚙️</div>
+                    <h2>Admin Panel</h2>
+                    <p>Manage products, inventory, recipes, employees, and view detailed reports</p>
+                    <button class="system-btn">Go to Admin →</button>
+                </a>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p>© 2025 Pork Shop Management System | All Rights Reserved</p>
+                <!-- Customers -->
+                <a href="customers.html" class="system-card" id="customersCard">
+                    <div class="system-icon">🎁</div>
+                    <h2>Loyalty Program</h2>
+                    <p>Manage customers, loyalty tiers (Bronze/Silver/Gold), and rewards tracking</p>
+                    <button class="system-btn">Manage Customers →</button>
+                </a>
+
+                <!-- Employees -->
+                <a href="employees.html" class="system-card" id="employeesCard">
+                    <div class="system-icon">👨‍💼</div>
+                    <h2>Employee Management</h2>
+                    <p>Manage staff, roles, payroll, and performance tracking</p>
+                    <button class="system-btn">Manage Staff →</button>
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2025 Pork Shop Management System | All Rights Reserved</p>
+            </div>
         </div>
     </div>
 
     <script src="js/data-service.js"></script>
     <script>
-        // Initialize and load stats on page load
+        // User Session Management
+        let currentUser = null;
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('loginName').value;
+            const role = document.getElementById('loginRole').value;
+            const currency = document.getElementById('loginCurrency').value;
+
+            if (!name || !role) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Store user session
+            currentUser = {
+                name: name,
+                role: role,
+                currency: currency,
+                loginTime: new Date().getTime()
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('selectedCurrency', currency);
+
+            showDashboard();
+        }
+
+        function quickLogin(name, role) {
+            document.getElementById('loginName').value = name;
+            document.getElementById('loginRole').value = role;
+            const event = new Event('submit');
+            document.querySelector('.login-form').dispatchEvent(event);
+        }
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('selectedCurrency');
+                currentUser = null;
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginContainer').classList.add('show');
+            document.getElementById('dashboardContainer').classList.remove('show');
+            document.getElementById('loginName').value = '';
+            document.getElementById('loginRole').value = '';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginContainer').classList.remove('show');
+            document.getElementById('dashboardContainer').classList.add('show');
+
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userRoleBadge').textContent = currentUser.role.toUpperCase() + ' ' + (currentUser.role === 'manager' ? '👑' : '👤');
+            document.getElementById('currencyDisplay').textContent = 'Currency: ' + currentUser.currency;
+
+            // Update stats
+            initializeStats();
+
+            // Control access based on role
+            if (currentUser.role === 'sales') {
+                // Sales staff can only access POS
+                document.getElementById('adminCard').classList.add('disabled');
+                document.getElementById('customersCard').classList.add('disabled');
+                document.getElementById('employeesCard').classList.add('disabled');
+                
+                // Disable click
+                document.getElementById('adminCard').onclick = (e) => { e.preventDefault(); alert('Manager access only'); };
+                document.getElementById('customersCard').onclick = (e) => { e.preventDefault(); alert('Manager access only'); };
+                document.getElementById('employeesCard').onclick = (e) => { e.preventDefault(); alert('Manager access only'); };
+            }
+        }
+
         function initializeStats() {
             // Load daily stats
             const dailyStats = JSON.parse(localStorage.getItem('dailyStats') || '{"transactions":0,"totalRevenue":0,"itemsSold":0}');
             document.getElementById('statTransactions').textContent = dailyStats.transactions;
-            document.getElementById('statRevenue').textContent = '₱' + dailyStats.totalRevenue.toFixed(2);
+            document.getElementById('statRevenue').textContent = currentUser.currency + dailyStats.totalRevenue.toFixed(2);
             document.getElementById('statItems').textContent = dailyStats.itemsSold;
 
             // Load customer count
@@ -262,10 +572,17 @@
             document.getElementById('statCustomers').textContent = customers.length;
         }
 
-        // Initialize on load
+        // Check if user is already logged in
         window.onload = function() {
             PorkShopDataService.init();
-            initializeStats();
+            
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            } else {
+                showLogin();
+            }
         };
     </script>
 </body>
