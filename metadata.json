@@ -1,0 +1,7 @@
+{
+  "name": "The Pork Barrel - Premium Butcher Shop",
+  "description": "An upscale digital storefront for a specialty pork butcher, featuring AI-powered recipe suggestions and a virtual butcher assistant.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
